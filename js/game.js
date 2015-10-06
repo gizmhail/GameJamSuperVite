@@ -1,9 +1,9 @@
-var game = new Phaser.Game(1200, 800, Phaser.AUTO, '', { 
+var game = new Phaser.Game(1200, 750, Phaser.AUTO, '', { 
     preload: preload, 
     create: create, 
     render: render, 
     update: update
-});
+}, false, false);
 
 //Globals
 var blobSprite = null;
@@ -33,7 +33,6 @@ function create () {
     game.physics.enable(blobSprite, Phaser.Physics.ARCADE);
     blobSprite.body.setSize(blobSprite.body.width/2, blobSprite.body.height/2, 0, 0);
     game.camera.follow(blobSprite);
-
     enemies = game.add.group();
     enemies.enableBody = true;
     enemies.physicsBodyType = Phaser.Physics.ARCADE;
@@ -57,7 +56,7 @@ function create () {
 	gameOverText.fixedToCamera = true;
 	gameOverText.cameraOffset.setTo(100, 100);
 	gameOverText.visible = false;
-
+	
 }
 
 //Called for each refresh
@@ -90,12 +89,12 @@ function render () {
 	if(game.paused){
 		return;
 	}
-	//*
+	/*
 	enemies.forEachAlive(function(ennemy){
 		game.debug.body(ennemy);
 	});
 	game.debug.body(blobSprite);
-	//*/
+	*/
 
 	enemies.forEachAlive(function(ennemy){
 		//CONSUMPTION
@@ -110,10 +109,16 @@ function render () {
 			eatenBlobs++;
 			scoreText.text = eatenBlobs+" blobs eaten";
 			var targetScale = blobSprite.scale.getMagnitude() + 0.05;
-			var maxScale = 4;
+			var maxScale = 8;
+			var minVelocity = 100;
 			if(targetScale > maxScale){
 				targetScale = maxScale;
 			}
+			var targetVelocity = 300/(1+(targetScale-1)/4);
+			if(targetVelocity < minVelocity){
+				targetVelocity = minVelocity;
+			}
+			blobSprite.body.maxVelocity.setMagnitude(targetVelocity);
 			blobSprite.scale.set(targetScale);
 			window.setTimeout(function(){ 
 				// We add a second ennemy, while reviving the first one ^_^
@@ -164,6 +169,9 @@ function createEnemy(){
 		enemy.body.collideWorldBounds = true;
 		enemy.body.bounce.set(1);
 		enemy.anchor.set(0.5);
+		enemy.alpha = 0;
+	    game.add.tween(enemy).to({alpha: 1}, 2000, Phaser.Easing.Quadratic.Out, true);
+
 
 	}
 }
