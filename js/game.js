@@ -9,6 +9,8 @@ var game = new Phaser.Game(1200, 800, Phaser.AUTO, '', {
 var blobSprite = null;
 var ennemy = null;
 var enemies = null;
+var scoreText = null;
+var eatenBlobs = 0;
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
@@ -36,15 +38,7 @@ function create () {
 
     var i = 0;
     while(i<10){
-    	var enemy = enemies.create(Math.random()*1200,Math.random()*800, 'foes');
-    	enemy.scale.set(0.5+1*Math.random());
-	    enemy.body.setSize(enemy.body.width/2, enemy.body.height/2, 0, 0);
-	    var maxVelocityAmplitude = 100;
-	    enemy.body.velocity.x = -maxVelocityAmplitude + Math.random()*2*maxVelocityAmplitude;
-	    enemy.body.velocity.y = -maxVelocityAmplitude + Math.random()*2*maxVelocityAmplitude;
-	    enemy.body.collideWorldBounds = true;
-	    enemy.body.bounce.set(1);
-	    enemy.anchor.set(0.5);
+    	createEnemy();
     	i++;
     }
 
@@ -59,6 +53,10 @@ function create () {
     */
     game.world.sendToBack(enemies);
     game.world.sendToBack(backgrounds);
+
+    scoreText = game.add.text(10, 0, "0 blobs eaten");
+    scoreText.fixedToCamera = true;
+
 }
 
 //Called for each refresh
@@ -77,11 +75,6 @@ function update(){
 
     if (game.input.mousePointer.isDown){
         game.physics.arcade.moveToPointer(blobSprite, 400);
-        var distance = Phaser.Point.distance(
-        	{x:blobSprite.body.centerX,y:blobSprite.body.centerY}, 
-        	{x:game.input.x, y:game.input.y});
-        console.log(distance);
-        //if(distance < 100 ){
         if (Phaser.Rectangle.contains(blobSprite.body, game.input.x, game.input.y)){
             blobSprite.body.velocity.setTo(0,0);
         }
@@ -102,6 +95,8 @@ function render () {
 		//CONSUPTION
 		if( ennemy && Phaser.Rectangle.containsRect(ennemy.body, blobSprite.body) && ennemy.alive){
 			ennemy.kill();
+			eatenBlobs++;
+			scoreText.text = eatenBlobs+" blobs eaten";
 			var targetScale = blobSprite.scale.getMagnitude() + 0.05;
 			var maxScale = 4;
 			if(targetScale > maxScale){
@@ -109,11 +104,25 @@ function render () {
 			}
 			blobSprite.scale.set(targetScale);
 			window.setTimeout(function(){ 
+				// We add 2 ennemies ^_^
+				createEnemy();
 				ennemy.revive();
-				enemy.scale.set((0.5+2*Math.random())*blobSprite.scale.getMagnitude());
+				var targetEnemyScale = blobSprite.scale.getMagnitude()*(0.7+Math.random()*1);
+				console.log("TargetScale:",targetEnemyScale);
+				ennemy.scale.setMagnitude(targetEnemyScale);
 				var maxPlayerDistance = 200;
 				ennemy.x = blobSprite.x - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
 				ennemy.y = blobSprite.y - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
+				if(ennemy.x >= blobSprite.x){
+					ennemy.x += 200;
+				}else{					
+					ennemy.x -= 200;
+				}
+				if(ennemy.y >= blobSprite.y){
+					ennemy.y += 200;
+				}else{					
+					ennemy.y -= 200;
+				}
 			}, 2000);
 		}else if( ennemy && Phaser.Rectangle.containsRect(blobSprite.body, ennemy.body) && ennemy.alive){
 			game.paused = true;
@@ -122,4 +131,19 @@ function render () {
 			//TODO Better death
 		}
 	}, this);
+}
+
+function createEnemy(){
+	if(enemies.children.length < 70){
+		var enemy = enemies.create(Math.random()*1200,Math.random()*800, 'foes');
+		enemy.scale.set(0.5+1*Math.random());
+		enemy.body.setSize(enemy.body.width/2, enemy.body.height/2, 0, 0);
+		var maxVelocityAmplitude = 100;
+		enemy.body.velocity.x = -maxVelocityAmplitude + Math.random()*2*maxVelocityAmplitude;
+		enemy.body.velocity.y = -maxVelocityAmplitude + Math.random()*2*maxVelocityAmplitude;
+		enemy.body.collideWorldBounds = true;
+		enemy.body.bounce.set(1);
+		enemy.anchor.set(0.5);
+
+	}
 }
