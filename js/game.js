@@ -18,6 +18,7 @@ var lastEnemyCreation = null;
 var maxSpeed = 400;
 var maxPlayerDistance = 200;
 var slurpSounds = [];  
+var noSounds = [];  
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
@@ -26,6 +27,8 @@ function preload () {
 	game.load.image('background', 'images/grid.png');
 	game.load.audio('slurp1', 'images/slurp1.mp3');
 	game.load.audio('slurp2', 'images/slurp2.mp3');
+	game.load.audio('no1', 'images/no1.mp3');
+	game.load.audio('no2', 'images/no2.mp3');
 } 
 
 //Called after preload - create sprites,... using assets here
@@ -68,7 +71,15 @@ function create () {
 
 	slurpSounds.push(game.add.audio("slurp1"));
 	slurpSounds.push(game.add.audio("slurp2"));
+	noSounds.push(game.add.audio("no1"));
+	noSounds.push(game.add.audio("no2"));
 	
+}
+
+function playNoSound(){
+	var i = Math.round(Math.random()*(noSounds.length-1));
+	var no = noSounds[i];
+	no.play();
 }
 
 function playSlurpSound(){
@@ -93,6 +104,12 @@ function update(){
 			game.physics.arcade.moveToObject(ennemy, blobSprite);			
 			ennemy.body.velocity.x = -ennemy.body.velocity.x;
 			ennemy.body.velocity.y = -ennemy.body.velocity.y;
+			var distance = Phaser.Point.distance(ennemy, blobSprite);
+			if(!ennemy.fleeing && distance < 200){
+				console.log("nonono", distance);
+				ennemy.fleeing = true;
+				playNoSound();
+			}
 		}	
 	}, this);
 
@@ -233,6 +250,7 @@ function createEnemy(x,y,scale,wakeTime){
 		enemy.body.bounce.set(1);
 		enemy.anchor.set(0.5);
 		enemy.alpha = 0;
+		enemy.fleeing = false;
 	    game.add.tween(enemy).to({alpha: 1}, wakeTime, Phaser.Easing.Quadratic.Out, true);
 
 
