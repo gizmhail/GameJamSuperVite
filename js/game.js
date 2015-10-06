@@ -87,16 +87,24 @@ function update(){
 
 //Called after the renderer rendered - usefull for debug rendering, ...
 function render () {
-	/*
+	if(game.paused){
+		return;
+	}
+	//*
 	enemies.forEachAlive(function(ennemy){
 		game.debug.body(ennemy);
 	});
 	game.debug.body(blobSprite);
-	*/
+	//*/
 
 	enemies.forEachAlive(function(ennemy){
 		//CONSUMPTION
+		if(ennemy.alpha < 1){
+			//Is reviving
+			return;
+		}
 		var enemyIsEdible = ennemy.scale.getMagnitude() < blobSprite.scale.getMagnitude();
+		var playerIsEdible = ennemy.scale.getMagnitude() > blobSprite.scale.getMagnitude();
 		if( enemyIsEdible && Phaser.Rectangle.containsRect(partialRectangle(ennemy.body, 0.6), blobSprite.body) ){
 			ennemy.kill();
 			eatenBlobs++;
@@ -111,6 +119,9 @@ function render () {
 				// We add a second ennemy, while reviving the first one ^_^
 				createEnemy();
 				ennemy.revive();
+				ennemy.alpha = 0;
+			    game.add.tween(ennemy).to({alpha: 1}, 2000, Phaser.Easing.Quadratic.Out, true);
+
 				var targetEnemyScale = blobSprite.scale.getMagnitude()*(0.7+Math.random()*1);
 				console.log("TargetScale:",targetEnemyScale);
 				ennemy.scale.setMagnitude(targetEnemyScale);
@@ -128,7 +139,7 @@ function render () {
 					ennemy.y -= 200;
 				}
 			}, 2000);
-		}else if( ! enemyIsEdible && Phaser.Rectangle.containsRect(partialRectangle(blobSprite.body, 0.6), ennemy.body) ){
+		}else if( playerIsEdible && Phaser.Rectangle.containsRect(partialRectangle(blobSprite.body, 0.6), ennemy.body) ){
 			gameOverText.visible = true;
 			game.paused = true;
 			//TODO Better death
