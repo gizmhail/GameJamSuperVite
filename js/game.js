@@ -99,18 +99,24 @@ function update(){
 	}
 	//game.physics.arcade.collide(enemies, enemies);
 	enemies.forEachAlive(function(ennemy){
+		var distance = Phaser.Point.distance(ennemy, blobSprite);
 		if(ennemy.scale.getMagnitude() > blobSprite.scale.getMagnitude() ){
 			//console.log("EXTERMINATE !!!");
 			game.physics.arcade.moveToObject(ennemy, blobSprite);
 		}else{
-			game.physics.arcade.moveToObject(ennemy, blobSprite);			
-			ennemy.body.velocity.x = -ennemy.body.velocity.x;
-			ennemy.body.velocity.y = -ennemy.body.velocity.y;
-			var distance = Phaser.Point.distance(ennemy, blobSprite);
-			if(!ennemy.fleeing && distance < 200){
-				console.log("nonono", distance);
-				ennemy.fleeing = true;
-				playNoSound();
+			if(distance>300){
+				ennemy.body.velocity.x = 0.95*ennemy.body.velocity.x;
+				ennemy.body.velocity.y = 0.95*ennemy.body.velocity.y;
+
+			}else{
+				game.physics.arcade.moveToObject(ennemy, blobSprite);			
+				ennemy.body.velocity.x = -ennemy.body.velocity.x;
+				ennemy.body.velocity.y = -ennemy.body.velocity.y;
+				if(!ennemy.fleeing && distance < 200){
+					console.log("nonono", distance);
+					ennemy.fleeing = true;
+					playNoSound();
+				}
 			}
 		}	
 	}, this);
@@ -188,6 +194,7 @@ function render () {
 				createEnemy();
 				ennemy.revive();
 				ennemy.alpha = 0;
+				ennemy.fleeing = false;
 			    game.add.tween(ennemy).to({alpha: 1}, 2000, Phaser.Easing.Quadratic.Out, true);
 
 				var targetEnemyScale = blobSprite.scale.getMagnitude()*(0.7+Math.random()*1);
