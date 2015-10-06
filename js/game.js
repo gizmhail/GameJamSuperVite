@@ -103,7 +103,7 @@ function render () {
 		if( ennemy && Phaser.Rectangle.containsRect(ennemy.body, blobSprite.body) && ennemy.alive){
 			ennemy.kill();
 			var targetScale = blobSprite.scale.getMagnitude() + 0.05;
-			var maxScale = 8;
+			var maxScale = 4;
 			if(targetScale > maxScale){
 				targetScale = maxScale;
 			}
