@@ -11,6 +11,7 @@ var ennemy = null;
 var enemies = null;
 var scoreText = null;
 var eatenBlobs = 0;
+var gameOverText = null;
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
@@ -44,18 +45,17 @@ function create () {
 
     //game.physics.enable(enemies, Phaser.Physics.ARCADE);
 
-    /*
-    ennemy = game.add.sprite(2000, 200, 'foes');
-    game.physics.enable(ennemy, Phaser.Physics.ARCADE);
-    ennemy.body.setSize(ennemy.body.width/2,ennemy.body.height/2,0,0);
-    ennemy.anchor.set(0.5);
-    ennemy.scale.set(5);
-    */
     game.world.sendToBack(enemies);
     game.world.sendToBack(backgrounds);
 
     scoreText = game.add.text(10, 0, "0 blobs eaten");
     scoreText.fixedToCamera = true;
+    scoreText.cameraOffset.setTo(10, 0);
+
+	gameOverText = game.add.text(100,100,"GAME OVER");
+	gameOverText.fixedToCamera = true;
+	gameOverText.cameraOffset.setTo(100, 100);
+	gameOverText.visible = false;
 
 }
 
@@ -73,7 +73,7 @@ function update(){
 		}	
 	}, this);
 
-    if (game.input.mousePointer.isDown){
+    if (game.input.mousePointer.isDown || 1){
         game.physics.arcade.moveToPointer(blobSprite, 400);
         if (Phaser.Rectangle.contains(blobSprite.body, game.input.x, game.input.y)){
             blobSprite.body.velocity.setTo(0,0);
@@ -87,9 +87,9 @@ function update(){
 //Called after the renderer rendered - usefull for debug rendering, ...
 function render () {
 	enemies.forEachAlive(function(ennemy){
-		game.debug.body(ennemy);
+		//game.debug.body(ennemy);
 	});
-	game.debug.body(blobSprite);
+	//game.debug.body(blobSprite);
 
 	enemies.forEachAlive(function(ennemy){
 		//CONSUPTION
@@ -125,9 +125,8 @@ function render () {
 				}
 			}, 2000);
 		}else if( ennemy && Phaser.Rectangle.containsRect(blobSprite.body, ennemy.body) && ennemy.alive){
+			gameOverText.visible = true;
 			game.paused = true;
-			var text = game.add.text(100,100,"GAME OVER");
-			text.fixedToCamera = true;
 			//TODO Better death
 		}
 	}, this);
