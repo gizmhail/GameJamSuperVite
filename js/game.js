@@ -17,13 +17,15 @@ var lastWeightLoss = null;
 var lastEnemyCreation = null;
 var maxSpeed = 400;
 var maxPlayerDistance = 200;
-
+var slurpSounds = [];  
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
 	game.load.image('blob', 'images/Blob1.png');
 	game.load.image('foes', 'images/Blob2.png');
 	game.load.image('background', 'images/grid.png');
+	game.load.audio('slurp1', 'images/slurp1.mp3');
+	game.load.audio('slurp2', 'images/slurp2.mp3');
 } 
 
 //Called after preload - create sprites,... using assets here
@@ -63,7 +65,16 @@ function create () {
 	gameOverText.fixedToCamera = true;
 	gameOverText.cameraOffset.setTo(100, 100);
 	gameOverText.visible = false;
+
+	slurpSounds.push(game.add.audio("slurp1"));
+	slurpSounds.push(game.add.audio("slurp2"));
 	
+}
+
+function playSlurpSound(){
+	var i = Math.round(Math.random()*(slurpSounds.length-1));
+	var slurp = slurpSounds[i];
+	slurp.play();
 }
 
 //Called for each refresh
@@ -76,7 +87,7 @@ function update(){
 	//game.physics.arcade.collide(enemies, enemies);
 	enemies.forEachAlive(function(ennemy){
 		if(ennemy.scale.getMagnitude() > blobSprite.scale.getMagnitude() ){
-			console.log("EXTERMINATE !!!");
+			//console.log("EXTERMINATE !!!");
 			game.physics.arcade.moveToObject(ennemy, blobSprite);
 		}else{
 			game.physics.arcade.moveToObject(ennemy, blobSprite);			
@@ -143,6 +154,7 @@ function render () {
 		var playerIsEdible = ennemy.scale.getMagnitude() > blobSprite.scale.getMagnitude();
 		if( enemyIsEdible && Phaser.Rectangle.containsRect(partialRectangle(ennemy.body, 0.6), blobSprite.body) ){
 			ennemy.kill();
+			playSlurpSound();
 			eatenBlobs++;
 			scoreText.text = eatenBlobs+" blobs eaten";
 			var targetScale = blobSprite.scale.getMagnitude() + 0.2;
