@@ -15,6 +15,8 @@ var gameOverText = null;
 var alwaysFollowMouse = true;
 var lastWeightLoss = null;
 var maxSpeed = 400;
+var maxPlayerDistance = 200;
+
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
@@ -155,7 +157,6 @@ function render () {
 				var targetEnemyScale = blobSprite.scale.getMagnitude()*(0.7+Math.random()*1);
 				console.log("TargetScale:",targetEnemyScale);
 				ennemy.scale.setMagnitude(targetEnemyScale);
-				var maxPlayerDistance = 200;
 				ennemy.x = blobSprite.x - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
 				ennemy.y = blobSprite.y - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
 				if(ennemy.x >= blobSprite.x){
@@ -184,8 +185,22 @@ function partialRectangle(rect,scale){
 }
 
 function createEnemy(x,y,scale,wakeTime){
-    if (typeof x === 'undefined') { x = Math.random()*1200; }
-    if (typeof y === 'undefined') { y = Math.random()*800; }
+    if (typeof x === 'undefined') { 
+    	x = blobSprite.x - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
+		if(x >= blobSprite.x){
+			x += 200;
+		}else{					
+			x -= 200;
+		}
+    }
+    if (typeof y === 'undefined') { 
+    	y = blobSprite.y - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
+		if(y >= blobSprite.y){
+			y += 200;
+		}else{					
+			y -= 200;
+		}
+    }
     if (typeof scale === 'undefined') { scale = 0.5+1*Math.random(); }
     if (typeof wakeTime === 'undefined') { wakeTime = 2000; }
 
