@@ -14,6 +14,7 @@ var eatenBlobs = 0;
 var gameOverText = null;
 var alwaysFollowMouse = true;
 var lastWeightLoss = null;
+var lastEnemyCreation = null;
 var maxSpeed = 400;
 var maxPlayerDistance = 200;
 
@@ -67,6 +68,11 @@ function create () {
 
 //Called for each refresh
 function update(){
+	var now = new Date();
+	var timeSinceNewEnemy = now.getTime() - lastEnemyCreation.getTime();
+	if(timeSinceNewEnemy > 3000){
+		createEnemy();
+	}
 	//game.physics.arcade.collide(enemies, enemies);
 	enemies.forEachAlive(function(ennemy){
 		if(ennemy.scale.getMagnitude() > blobSprite.scale.getMagnitude() ){
@@ -81,7 +87,6 @@ function update(){
 
     if (game.input.mousePointer.isDown && blobSprite.scale.getMagnitude() >= 1.5){
     	var recentWeightLoss = false;
-    	var now = new Date();
     	if(lastWeightLoss){
         	var deltaTime = now.getTime() - lastWeightLoss.getTime();
         	if(deltaTime < 1000){
@@ -185,6 +190,7 @@ function partialRectangle(rect,scale){
 }
 
 function createEnemy(x,y,scale,wakeTime){
+	lastEnemyCreation = new Date();
     if (typeof x === 'undefined') { 
     	x = blobSprite.x - maxPlayerDistance + 2*maxPlayerDistance*Math.random();
 		if(x >= blobSprite.x){
@@ -201,7 +207,7 @@ function createEnemy(x,y,scale,wakeTime){
 			y -= 200;
 		}
     }
-    if (typeof scale === 'undefined') { scale = 0.5+1*Math.random(); }
+    if (typeof scale === 'undefined') { scale = blobSprite.scale.getMagnitude()*(0.5+Math.random()*1); }
     if (typeof wakeTime === 'undefined') { wakeTime = 2000; }
 
 	if(enemies.children.length < 70){
