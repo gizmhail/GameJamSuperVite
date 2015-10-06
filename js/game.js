@@ -108,7 +108,7 @@ function render () {
 			}
 			blobSprite.scale.set(targetScale);
 			window.setTimeout(function(){ 
-				// We add 2 ennemies ^_^
+				// We add a second ennemy, while reviving the first one ^_^
 				createEnemy();
 				ennemy.revive();
 				var targetEnemyScale = blobSprite.scale.getMagnitude()*(0.7+Math.random()*1);
@@ -128,7 +128,7 @@ function render () {
 					ennemy.y -= 200;
 				}
 			}, 2000);
-		}else if( ! enemyIsEdible && Phaser.Rectangle.containsRect(blobSprite.body, ennemy.body) ){
+		}else if( ! enemyIsEdible && Phaser.Rectangle.containsRect(partialRectangle(blobSprite.body, 0.6), ennemy.body) ){
 			gameOverText.visible = true;
 			game.paused = true;
 			//TODO Better death
