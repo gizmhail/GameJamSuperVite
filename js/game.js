@@ -74,7 +74,7 @@ function update(){
 	}, this);
 
     if (game.input.mousePointer.isDown || 1){
-        game.physics.arcade.moveToPointer(blobSprite, 400);
+        game.physics.arcade.moveToPointer(blobSprite, 300);
         if (Phaser.Rectangle.contains(blobSprite.body, game.input.x, game.input.y)){
             blobSprite.body.velocity.setTo(0,0);
         }
@@ -86,10 +86,12 @@ function update(){
 
 //Called after the renderer rendered - usefull for debug rendering, ...
 function render () {
+	/*
 	enemies.forEachAlive(function(ennemy){
-		//game.debug.body(ennemy);
+		game.debug.body(ennemy);
 	});
-	//game.debug.body(blobSprite);
+	game.debug.body(blobSprite);
+	*/
 
 	enemies.forEachAlive(function(ennemy){
 		//CONSUMPTION
