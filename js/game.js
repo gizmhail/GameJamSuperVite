@@ -12,6 +12,7 @@ var enemies = null;
 var scoreText = null;
 var eatenBlobs = 0;
 var gameOverText = null;
+var alwaysFollowMouse = true;
 //Assets loading - do not use asssets here
 function preload () {
     //Load this image, available with the 'background' key later
@@ -73,7 +74,7 @@ function update(){
 		}	
 	}, this);
 
-    if (game.input.mousePointer.isDown || 1){
+    if (game.input.mousePointer.isDown || alwaysFollowMouse){
         game.physics.arcade.moveToPointer(blobSprite, 300);
         if (Phaser.Rectangle.contains(blobSprite.body, game.input.x, game.input.y)){
             blobSprite.body.velocity.setTo(0,0);
