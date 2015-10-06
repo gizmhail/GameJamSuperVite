@@ -29,6 +29,7 @@ function preload () {
 	game.load.audio('slurp2', 'images/slurp2.mp3');
 	game.load.audio('no1', 'images/no1.mp3');
 	game.load.audio('no2', 'images/no2.mp3');
+	game.load.audio('no3', 'images/no3.mp3');
 } 
 
 //Called after preload - create sprites,... using assets here
@@ -73,6 +74,7 @@ function create () {
 	slurpSounds.push(game.add.audio("slurp2"));
 	noSounds.push(game.add.audio("no1"));
 	noSounds.push(game.add.audio("no2"));
+	noSounds.push(game.add.audio("no3"));
 	
 }
 
