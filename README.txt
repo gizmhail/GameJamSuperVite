@@ -1,4 +1,4 @@
-DevDay 2015 - Rennes Site
+= DevDay 2015 - Rennes Site = 
 Game "SuperVite"
 
 The game has for inspiration Agar.io
