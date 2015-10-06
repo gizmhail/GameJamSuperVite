@@ -92,8 +92,9 @@ function render () {
 	//game.debug.body(blobSprite);
 
 	enemies.forEachAlive(function(ennemy){
-		//CONSUPTION
-		if( ennemy && Phaser.Rectangle.containsRect(ennemy.body, blobSprite.body) && ennemy.alive){
+		//CONSUMPTION
+		var enemyIsEdible = ennemy.scale.getMagnitude() < blobSprite.scale.getMagnitude();
+		if( enemyIsEdible && Phaser.Rectangle.containsRect(partialRectangle(ennemy.body, 0.6), blobSprite.body) ){
 			ennemy.kill();
 			eatenBlobs++;
 			scoreText.text = eatenBlobs+" blobs eaten";
@@ -124,12 +125,18 @@ function render () {
 					ennemy.y -= 200;
 				}
 			}, 2000);
-		}else if( ennemy && Phaser.Rectangle.containsRect(blobSprite.body, ennemy.body) && ennemy.alive){
+		}else if( ! enemyIsEdible && Phaser.Rectangle.containsRect(blobSprite.body, ennemy.body) ){
 			gameOverText.visible = true;
 			game.paused = true;
 			//TODO Better death
 		}
 	}, this);
+}
+
+function partialRectangle(rect,scale){
+	var width = rect.width*scale; 
+	var height = rect.height*scale; 
+	return new Phaser.Rectangle(rect.x + width/2, rect.y + height/2, width, height);
 }
 
 function createEnemy(){
