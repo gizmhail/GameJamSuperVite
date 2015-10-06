@@ -75,7 +75,7 @@ function update(){
 
     if (game.input.mousePointer.isDown || alwaysFollowMouse){
         game.physics.arcade.moveToPointer(blobSprite, 300);
-        if (Phaser.Rectangle.contains(blobSprite.body, game.input.x, game.input.y)){
+        if (Phaser.Rectangle.contains(partialRectangle(blobSprite.body,0.4), game.input.x, game.input.y)){
             blobSprite.body.velocity.setTo(0,0);
         }
     }else{
